@@ -59,7 +59,7 @@ Name: @
 Value: your VPS public IP
 ```
 
-Optionally redirect `www` to the root domain with a `CNAME` record whose name is `www` and target is `mcpgohighlevel.com`.
+Configure `www` with a `CNAME` record whose name is `www` and target is `mcpgohighlevel.com`. Traefik serves both hostnames, while `mcpgohighlevel.com` remains the canonical public URL.
 
 ## GitHub Actions Runner
 
