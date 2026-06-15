@@ -134,6 +134,7 @@ Authorization: Bearer <token>
 ## Landing And Adoption Dashboard
 
 - Public landing page: `https://mcpgohighlevel.com`
+- Technical documentation and searchable endpoint catalog: `https://mcpgohighlevel.com/docs`
 - Remote MCP endpoint: `https://go.mcpgohighlevel.com/mcp`
 - Private adoption dashboard: `https://mcpgohighlevel.com/admin/usage`
 

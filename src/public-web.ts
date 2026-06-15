@@ -1,10 +1,32 @@
 import type { Application, Request, Response } from 'express';
 import express from 'express';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { safeTokenEquals } from './http-auth.js';
 import type { UsageAnalytics, UsageSummary } from './usage-analytics.js';
 
 const PUBLIC_PATH = path.resolve(process.cwd(), 'public');
+const COVERAGE_PATH = path.resolve(process.cwd(), 'docs', 'ghl-api-coverage.json');
+
+interface PublicEndpoint {
+  key: string;
+  method: string;
+  path: string;
+  app: string;
+  summary: string;
+  versions: string[];
+  scopes: string[];
+}
+
+interface EndpointCatalog {
+  generatedAt: string;
+  coveragePercent: number;
+  officialCount: number;
+  coveredCount: number;
+  localImplementationCount: number;
+  apps: string[];
+  endpoints: PublicEndpoint[];
+}
 
 export function registerPublicWebRoutes(
   app: Application,
@@ -35,6 +57,15 @@ export function registerPublicWebRoutes(
     res.json({ toolCount: options.toolCount, mcpUrl: options.mcpUrl, free: true });
   });
 
+  app.get('/docs', (_req, res) => {
+    res.sendFile(path.join(PUBLIC_PATH, 'docs.html'));
+  });
+
+  app.get('/api/endpoints', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.json(loadEndpointCatalog());
+  });
+
   app.get('/admin/usage', requireAdmin(options.adminToken), async (_req, res) => {
     const summary = await usageAnalytics.getSummary();
     res.type('html').send(renderUsageDashboard(summary));
@@ -43,6 +74,33 @@ export function registerPublicWebRoutes(
   app.get('/admin/usage.json', requireAdmin(options.adminToken), async (_req, res) => {
     res.json(await usageAnalytics.getSummary());
   });
+}
+
+export function loadEndpointCatalog(): EndpointCatalog {
+  const coverage = JSON.parse(readFileSync(COVERAGE_PATH, 'utf8')) as {
+    official: { endpoints: PublicEndpoint[] };
+    local: { endpoints: unknown[] };
+    comparison: { coveredCount: number; officialUniqueCount: number; coveragePercent: number };
+  };
+  const endpoints = coverage.official.endpoints.map((endpoint) => ({
+    key: endpoint.key,
+    method: endpoint.method,
+    path: endpoint.path,
+    app: endpoint.app,
+    summary: endpoint.summary || endpoint.key,
+    versions: endpoint.versions || [],
+    scopes: endpoint.scopes || [],
+  }));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    coveragePercent: coverage.comparison.coveragePercent,
+    officialCount: coverage.comparison.officialUniqueCount,
+    coveredCount: coverage.comparison.coveredCount,
+    localImplementationCount: coverage.local.endpoints.length,
+    apps: [...new Set(endpoints.map((endpoint) => endpoint.app))].sort(),
+    endpoints,
+  };
 }
 
 function requireAdmin(adminToken?: string) {

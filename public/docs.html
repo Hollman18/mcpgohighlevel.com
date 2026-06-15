@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentación técnica y explorador de endpoints de MCP GoHighLevel.">
+  <meta name="robots" content="index,follow">
+  <title>Docs y endpoints | MCP GoHighLevel</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/docs.css?v=1">
+  <script src="/assets/docs.js?v=1" defer></script>
+</head>
+<body>
+  <header class="docs-header"><a class="docs-brand" href="/"><img src="/assets/ghl-icon.png" alt=""><span>MCP GoHighLevel</span></a><nav><a href="/">Inicio</a><a href="#explorer">Endpoints</a><button type="button" data-copy-mcp>Copiar MCP URL</button></nav></header>
+  <main>
+    <section class="docs-hero">
+      <p class="eyebrow">Documentación técnica</p>
+      <h1>Explora toda la superficie de GoHighLevel.</h1>
+      <p>Busca rutas oficiales por módulo, método, scope o palabra clave. El catálogo se genera desde la auditoría de cobertura del repositorio.</p>
+      <div class="docs-endpoint"><span>Remote MCP</span><code data-mcp-url>https://go.mcpgohighlevel.com/mcp</code><button type="button" data-copy-mcp>Copiar</button></div>
+    </section>
+
+    <section class="docs-stats" aria-label="Cobertura técnica"><div><strong data-official-count>590</strong><span>endpoints oficiales</span></div><div><strong data-covered-count>590</strong><span>endpoints cubiertos</span></div><div><strong data-coverage>100 %</strong><span>cobertura verificada</span></div><div><strong data-app-count>—</strong><span>módulos de API</span></div></section>
+
+    <section class="docs-overview">
+      <div><p class="eyebrow">Arquitectura</p><h2>Una URL remota, credenciales propias y herramientas estructuradas.</h2></div>
+      <div class="overview-grid"><article><span>01</span><h3>Conexión MCP</h3><p>El agente descubre herramientas y las ejecuta mediante Streamable HTTP.</p></article><article><span>02</span><h3>Autorización por cuenta</h3><p>Cada usuario conecta su propio Private Integration Token y Location ID.</p></article><article><span>03</span><h3>GoHighLevel API</h3><p>Las llamadas se envían a LeadConnector con versión y scopes documentados.</p></article></div>
+    </section>
+
+    <section class="explorer" id="explorer">
+      <div class="explorer-heading"><div><p class="eyebrow">Explorador de endpoints</p><h2>Encuentra una capacidad técnica.</h2></div><p><span data-result-count>0</span> resultados</p></div>
+      <div class="filters"><label class="search-field"><span>Buscar</span><input type="search" id="endpoint-search" placeholder="Ej. contacts, reporting, conversations..." autocomplete="off"></label><label><span>Módulo</span><select id="app-filter"><option value="">Todos los módulos</option></select></label><label><span>Método</span><select id="method-filter"><option value="">Todos</option><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></label></div>
+      <div class="method-legend"><span class="method get">GET</span><span class="method post">POST</span><span class="method put">PUT</span><span class="method patch">PATCH</span><span class="method delete">DELETE</span></div>
+      <div id="endpoint-list" class="endpoint-list" aria-live="polite"><div class="loading">Cargando catálogo técnico…</div></div>
+      <button class="load-more" id="load-more" type="button" hidden>Mostrar más endpoints</button>
+    </section>
+
+    <section class="technical-cta"><div><p class="eyebrow">¿Listo para probar?</p><h2>Conecta el endpoint a tu agente.</h2><p>Compatible con Claude, Codex, OpenClaw, Hermes y cualquier cliente que implemente MCP remoto.</p></div><button type="button" data-copy-mcp>Copiar URL del MCP</button></section>
+  </main>
+  <footer><a href="/">MCP GoHighLevel</a><span>Catálogo generado desde la cobertura oficial auditada.</span><a href="https://github.com/Hollman18/mcpgohighlevel.com">GitHub</a></footer>
+</body>
+</html>
