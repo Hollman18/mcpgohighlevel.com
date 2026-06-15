@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Conecta GoHighLevel con cualquier agente compatible con MCP. Reporting avanzado, automatización CRM y 867 herramientas.">
+  <meta name="description" content="Conecta GoHighLevel con cualquier agente compatible con MCP. 867 herramientas, reporting comercial e historiales por vendedor.">
   <meta property="og:title" content="MCP GoHighLevel">
-  <meta property="og:description" content="GoHighLevel conectado con agentes de inteligencia artificial, reporting comercial e historiales por vendedor.">
+  <meta property="og:description" content="Consulta y opera GoHighLevel desde tu agente de inteligencia artificial favorito.">
   <meta property="og:image" content="/assets/ghl-setup-guide-preview.png">
-  <title>MCP GoHighLevel | CRM y reporting para agentes IA</title>
+  <title>MCP GoHighLevel | Tu CRM conectado con IA</title>
   <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/assets/landing.css?v=1">
-  <script src="/assets/landing.js?v=1" defer></script>
+  <link rel="stylesheet" href="/assets/landing.css?v=2">
+  <link rel="stylesheet" href="/assets/landing-layout.css?v=2">
+  <script src="/assets/landing.js?v=2" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -19,9 +20,10 @@
       <span>MCP GoHighLevel</span>
     </a>
     <nav aria-label="Principal">
-      <a href="#valor">Diferenciales</a>
+      <a href="#capacidades">Capacidades</a>
       <a href="#reportes">Reportes</a>
-      <a class="nav-cta" href="#instalar">Instalar</a>
+      <a href="#ejemplos">Ejemplos</a>
+      <a class="nav-cta" href="#instalar">Conectar</a>
     </nav>
   </header>
 
@@ -29,83 +31,112 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <p class="eyebrow">Conector remoto MCP · Gratis</p>
+        <div class="status-pill"><span></span> Servicio activo · Gratis</div>
         <h1 id="hero-title">MCP GoHighLevel</h1>
-        <p class="hero-copy">Conecta tu CRM con cualquier agente compatible con MCP. Consulta contactos, conversaciones, pipeline, llamadas, SMS, WhatsApp y email desde una sola URL.</p>
+        <p class="hero-kicker">Tu CRM, listo para conversar.</p>
+        <p class="hero-copy">Conecta GoHighLevel con Claude, Codex y cualquier cliente compatible con MCP. Consulta tu operación comercial y ejecuta acciones desde una sola URL.</p>
         <div class="hero-actions">
-          <button class="primary-action" type="button" data-copy-mcp>Copiar URL del MCP</button>
-          <a class="secondary-action" href="#reportes">Explorar reportes</a>
+          <button class="primary-action" type="button" data-copy-mcp><span aria-hidden="true">⧉</span> Copiar URL del MCP</button>
+          <a class="secondary-action" href="#instalar">Ver instalación</a>
         </div>
-        <div class="endpoint" aria-label="URL del MCP"><code data-mcp-url>https://go.mcpgohighlevel.com/mcp</code><span data-copy-status></span></div>
+        <div class="endpoint" aria-label="URL del MCP">
+          <span class="endpoint-label">Endpoint</span>
+          <code data-mcp-url>https://go.mcpgohighlevel.com/mcp</code>
+          <span class="copy-status" data-copy-status aria-live="polite"></span>
+        </div>
+        <ul class="hero-trust" aria-label="Características principales">
+          <li>Sin servidor local</li>
+          <li>Credenciales por cuenta</li>
+          <li>Compatible con cualquier agente MCP</li>
+        </ul>
       </div>
     </section>
 
     <section class="proof-band" aria-label="Cobertura">
-      <div><strong data-tool-count>867</strong><span>herramientas MCP</span></div>
+      <div><strong data-tool-count>867</strong><span>herramientas disponibles</span></div>
       <div><strong>590 / 590</strong><span>endpoints oficiales cubiertos</span></div>
       <div><strong>23</strong><span>herramientas de analítica</span></div>
-      <div><strong>100 %</strong><span>gratis actualmente</span></div>
+      <div><strong>100 %</strong><span>gratuito actualmente</span></div>
     </section>
 
-    <section class="section" id="valor">
-      <div class="section-heading">
-        <p class="eyebrow">Más que un conector</p>
-        <h2>La capa de inteligencia que le faltaba a tu CRM</h2>
-        <p>Además de exponer la API de HighLevel, el servidor combina fuentes y prepara respuestas útiles para vendedores, líderes y gerencia.</p>
+    <section class="section intro-section" id="capacidades">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Todo tu CRM disponible</p>
+          <h2>De datos dispersos a respuestas claras.</h2>
+        </div>
+        <p>El servidor reúne la cobertura de la API de HighLevel con herramientas diseñadas para preguntas comerciales reales.</p>
       </div>
-      <div class="feature-grid">
-        <article><span class="feature-number">01</span><h3>Cobertura profunda</h3><p>Contactos, conversaciones, oportunidades, calendarios, pagos, workflows, funnels, ads, SaaS API y más.</p></article>
-        <article><span class="feature-number">02</span><h3>Reportes por usuario</h3><p>Actividad y resultados por setter, closer, vendedor, líder o equipo, con información lista para analizar.</p></article>
-        <article><span class="feature-number">03</span><h3>Históricos paginados</h3><p>Escanea rangos grandes y organiza llamadas, mensajes y detalles sin detenerse en la primera página.</p></article>
-        <article><span class="feature-number">04</span><h3>Agente neutral</h3><p>Compatible con clientes que implementen MCP, sin depender exclusivamente de Claude o de un proveedor de IA.</p></article>
-        <article><span class="feature-number">05</span><h3>Credenciales propias</h3><p>Cada cuenta autoriza su Private Integration Token y Location ID mediante un flujo cifrado.</p></article>
-        <article><span class="feature-number">06</span><h3>Listo para operar</h3><p>Servidor remoto, perfiles de herramientas, despliegue continuo y controles de seguridad para producción.</p></article>
+      <div class="capability-grid">
+        <article><span class="capability-icon">01</span><div><h3>Actividad comercial</h3><p>Llamadas, SMS, WhatsApp y email por usuario, contacto, fecha o equipo.</p></div></article>
+        <article><span class="capability-icon">02</span><div><h3>Ventas y pipeline</h3><p>Oportunidades, etapas, valor, conversión, ganados, perdidos y forecast.</p></div></article>
+        <article><span class="capability-icon">03</span><div><h3>Contactos y seguimiento</h3><p>Asignaciones, conversaciones, tareas, citas, notas y próximos pasos.</p></div></article>
+        <article><span class="capability-icon">04</span><div><h3>Históricos amplios</h3><p>Paginación y recorridos por rangos para evitar quedarse en los últimos registros.</p></div></article>
+      </div>
+      <div class="channel-strip" aria-label="Canales y áreas cubiertas">
+        <span>Llamadas</span><span>SMS</span><span>WhatsApp</span><span>Email</span><span>Contactos</span><span>Pipeline</span><span>Calendarios</span><span>Pagos</span>
       </div>
     </section>
 
     <section class="reporting-band" id="reportes">
-      <div class="section-heading light">
-        <p class="eyebrow">Reporting comercial</p>
-        <h2>Preguntas de negocio, no solo llamadas a endpoints</h2>
-        <p>Dos modelos verticales convierten la actividad de GoHighLevel en una vista útil para equipos comerciales.</p>
+      <div class="section-heading light split-heading">
+        <div>
+          <p class="eyebrow">Inteligencia comercial</p>
+          <h2>Reportes pensados para dirigir equipos.</h2>
+        </div>
+        <p>Compara producción, actividad y resultados sin tener que conocer los endpoints de GoHighLevel.</p>
       </div>
       <div class="report-columns">
         <article>
           <p class="report-label">Software por suscripción</p>
           <h3>SaaS Sales Intelligence</h3>
-          <ul><li>Producción de setters y closers</li><li>Pipeline abierto, ganado y perdido</li><li>Llamadas y mensajes efectivos</li><li>Riesgo, seguimiento y forecast</li></ul>
+          <ul><li>Producción de setters y closers</li><li>Pipeline abierto, ganado y perdido</li><li>Llamadas y mensajes efectivos</li><li>Seguimiento, riesgo y forecast</li></ul>
         </article>
         <article>
           <p class="report-label">Infoproductos</p>
           <h3>Value Ladder Intelligence</h3>
-          <ul><li>Lead magnet y producto de entrada</li><li>Masterclass, webinar y workshop</li><li>Aplicaciones y high ticket</li><li>Conversión por oferta, etapa y vendedor</li></ul>
+          <ul><li>Lead magnet y producto de entrada</li><li>Masterclass, webinar y workshop</li><li>Aplicaciones y high ticket</li><li>Conversión por oferta y vendedor</li></ul>
         </article>
       </div>
-      <div class="channel-row"><span>Llamadas</span><span>SMS</span><span>WhatsApp</span><span>Email</span><span>Contactos</span><span>Pipeline</span></div>
+    </section>
+
+    <section class="section prompt-section" id="ejemplos">
+      <div class="section-heading">
+        <p class="eyebrow">Empieza con una pregunta</p>
+        <h2>Pide el informe como lo pedirías a tu equipo.</h2>
+        <p>Después de conectar tu cuenta, puedes comenzar con cualquiera de estos ejemplos.</p>
+      </div>
+      <div class="prompt-list">
+        <button type="button" data-copy-prompt="Haz un informe de llamadas de este mes por vendedor. Incluye total, contestadas, no contestadas, duración y promedio diario."><span>01</span><strong>Informe de llamadas por vendedor</strong><small>Totales, efectividad, duración y promedio diario</small><b>Copiar</b></button>
+        <button type="button" data-copy-prompt="Compara el pipeline de todos los closers. Incluye oportunidades abiertas, ganadas, perdidas, valor total y tasa de conversión."><span>02</span><strong>Comparación del pipeline</strong><small>Valor, etapas, conversión y resultados</small><b>Copiar</b></button>
+        <button type="button" data-copy-prompt="Resume la actividad de SMS, WhatsApp y email por usuario durante los últimos 30 días."><span>03</span><strong>Actividad de mensajes</strong><small>SMS, WhatsApp y email por usuario</small><b>Copiar</b></button>
+      </div>
     </section>
 
     <section class="setup-section" id="instalar">
       <div class="setup-copy">
         <p class="eyebrow">Instalación guiada</p>
-        <h2>Conecta una cuenta en minutos</h2>
+        <h2>Conecta tu cuenta en tres pasos.</h2>
         <ol>
-          <li><strong>Agrega la URL</strong><span>Usa el endpoint remoto en tu cliente MCP.</span></li>
-          <li><strong>Autoriza HighLevel</strong><span>Introduce tu Private Integration Token y Location ID.</span></li>
-          <li><strong>Empieza a consultar</strong><span>Pide acciones CRM o informes comerciales en lenguaje natural.</span></li>
+          <li><strong>Agrega el endpoint</strong><span>Pega la URL remota en tu cliente MCP.</span></li>
+          <li><strong>Autoriza HighLevel</strong><span>Usa tu Private Integration Token y Location ID.</span></li>
+          <li><strong>Haz tu primera consulta</strong><span>Pide acciones CRM o informes en lenguaje natural.</span></li>
         </ol>
-        <button class="primary-action dark" type="button" data-copy-mcp>Copiar URL del MCP</button>
+        <button class="primary-action dark" type="button" data-copy-mcp><span aria-hidden="true">⧉</span> Copiar URL del MCP</button>
+        <p class="security-note">Tus credenciales se cifran y pertenecen únicamente a tu conexión.</p>
       </div>
       <figure>
         <img src="/assets/ghl-setup-guide.gif" alt="Guía animada para localizar el Location ID y el Private Integration Token en HighLevel">
-        <figcaption>Guía para encontrar las credenciales dentro de HighLevel.</figcaption>
+        <figcaption>Cómo encontrar el Location ID y el Private Integration Token en HighLevel.</figcaption>
       </figure>
     </section>
 
     <section class="final-cta">
       <img src="/assets/ghl-logo.png" alt="HighLevel">
-      <h2>Tu CRM, disponible para el agente que elijas.</h2>
-      <p>El servicio es gratuito durante esta etapa de crecimiento.</p>
-      <button class="primary-action" type="button" data-copy-mcp>Copiar y conectar</button>
+      <p class="eyebrow">Listo para conectar</p>
+      <h2>Haz que tu CRM responda.</h2>
+      <p>Una URL. Tu propia cuenta. El agente que prefieras.</p>
+      <button class="primary-action" type="button" data-copy-mcp><span aria-hidden="true">⧉</span> Copiar y conectar</button>
     </section>
   </main>
 

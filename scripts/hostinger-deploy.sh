@@ -115,8 +115,17 @@ install_env_file() {
     exit 1
   fi
 
+  existing_admin_token=""
+  if [ -f "$DEPLOY_PATH/.env" ]; then
+    existing_admin_token="$($SUDO sed -n 's/^MCP_ADMIN_TOKEN=//p' "$DEPLOY_PATH/.env" | tail -1)"
+  fi
+
   $SUDO cp "$ENV_SOURCE" "$DEPLOY_PATH/.env"
   $SUDO chmod 600 "$DEPLOY_PATH/.env"
+
+  if [ -n "$existing_admin_token" ] && ! $SUDO grep -q '^MCP_ADMIN_TOKEN=' "$DEPLOY_PATH/.env"; then
+    printf 'MCP_ADMIN_TOKEN=%s\n' "$existing_admin_token" | $SUDO tee -a "$DEPLOY_PATH/.env" >/dev/null
+  fi
 
   {
     printf '\n'

@@ -25,3 +25,17 @@ document.querySelectorAll('[data-copy-mcp]').forEach((button) => {
     }
   });
 });
+
+document.querySelectorAll('[data-copy-prompt]').forEach((button) => {
+  button.addEventListener('click', async () => {
+    const prompt = button.dataset.copyPrompt;
+    const label = button.querySelector('b');
+    try {
+      await navigator.clipboard.writeText(prompt);
+      label.textContent = 'Copiado';
+      setTimeout(() => { label.textContent = 'Copiar'; }, 1600);
+    } catch {
+      window.prompt('Copia este prompt:', prompt);
+    }
+  });
+});
