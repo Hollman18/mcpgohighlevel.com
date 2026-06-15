@@ -5,6 +5,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes, timingSafeEq
 import type { GHLConfig } from './types/ghl-types.js';
 import { EnhancedGHLClient } from './enhanced-ghl-client.js';
 import { extractBearerToken } from './http-auth.js';
+import type { UsageAnalytics } from './usage-analytics.js';
 
 type StoredAuthorizationCode = {
   clientId: string;
@@ -18,6 +19,7 @@ type StoredAuthorizationCode = {
 export type ByoGhlTokenPayload = GHLConfig & {
   iat: number;
   exp: number;
+  clientId?: string;
 };
 
 export type ByoGhlOAuthOptions = {
@@ -25,6 +27,7 @@ export type ByoGhlOAuthOptions = {
   publicBaseUrl?: string;
   secret: string;
   tokenTtlSeconds?: number;
+  usageAnalytics?: UsageAnalytics;
 };
 
 export type RequestWithGhlConfig = Request & {
@@ -440,6 +443,7 @@ export function createByoGhlOAuthRouter(options: ByoGhlOAuthOptions): Router {
         ...config,
         iat: nowSeconds,
         exp: nowSeconds + (options.tokenTtlSeconds ?? DEFAULT_TOKEN_TTL_SECONDS),
+        clientId,
       },
       expiresAt: Date.now() + AUTH_CODE_TTL_MS,
     });
@@ -455,7 +459,7 @@ export function createByoGhlOAuthRouter(options: ByoGhlOAuthOptions): Router {
     }
   });
 
-  router.post('/oauth/token', (req, res) => {
+  router.post('/oauth/token', async (req, res) => {
     cleanupCodes();
     const grantType = String(req.body.grant_type || '');
     const code = String(req.body.code || '');
@@ -480,6 +484,7 @@ export function createByoGhlOAuthRouter(options: ByoGhlOAuthOptions): Router {
 
     codes.delete(code);
     const accessToken = sealByoGhlToken(record.payload, options.secret);
+    await options.usageAnalytics?.recordAuthorization(record.payload.locationId, record.payload.clientId);
     res.json({
       access_token: accessToken,
       token_type: 'Bearer',
@@ -514,6 +519,7 @@ export function createByoGhlResourceMiddleware(options: ByoGhlOAuthOptions): Req
         baseUrl: payload.baseUrl,
         version: payload.version,
       };
+      void options.usageAnalytics?.recordActivity(payload.locationId, payload.clientId);
       next();
     } catch (error) {
       res.setHeader('WWW-Authenticate', 'Bearer error="invalid_token"');

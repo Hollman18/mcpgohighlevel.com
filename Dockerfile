@@ -20,6 +20,7 @@ COPY --chown=node:node --from=build /app/examples ./examples
 COPY --chown=node:node --from=build /app/public ./public
 COPY --chown=node:node --from=build /app/.env.example ./.env.example
 RUN npm ci --omit=dev
+RUN mkdir -p /app/data && chown node:node /app/data
 
 EXPOSE 8000
 USER node

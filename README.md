@@ -20,6 +20,7 @@ Highlights:
 - Full official GoHighLevel API coverage from generated OpenAPI tools
 - Curated CRM workflows for agent-friendly daily use
 - Business reporting tools for sellers, setters, closers, managers, and executives
+- Privacy-conscious adoption dashboard for connected, active, and inactive accounts
 - MCP Apps onboarding screen with GoHighLevel branding
 - CI/CD deployment flow for Hostinger VPS
 - Security-focused defaults for auth, CORS, request limits, Docker, and secret handling
@@ -129,6 +130,25 @@ Authorization: Bearer <token>
 ```
 
 `GET /` and `GET /health` remain public for discovery and uptime checks.
+
+## Landing And Adoption Dashboard
+
+- Public landing page: `https://mcpgohighlevel.com`
+- Remote MCP endpoint: `https://go.mcpgohighlevel.com/mcp`
+- Private adoption dashboard: `https://mcpgohighlevel.com/admin/usage`
+
+The dashboard counts unique connected GoHighLevel Location IDs using one-way hashes. It does not store raw Location IDs, Private Integration Tokens, OAuth access tokens, contact data, or report contents.
+
+An account is active when it authorized or used the MCP within the last 30 days. Configure the window and dashboard password with:
+
+```bash
+MCP_ADMIN_TOKEN=your_private_dashboard_password
+MCP_USAGE_ACTIVE_DAYS=30
+MCP_USAGE_HASH_SALT=your_random_hash_salt
+MCP_USAGE_DATA_PATH=/app/data/usage.json
+```
+
+The dashboard accepts HTTP Basic authentication. Use `admin` as the username and `MCP_ADMIN_TOKEN` as the password. When `MCP_ADMIN_TOKEN` is omitted, the server uses `MCP_AUTH_TOKEN`.
 
 ## Public Multi-User Connector
 

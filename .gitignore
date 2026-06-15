@@ -38,6 +38,7 @@ coverage/
 
 # Runtime data
 pids/
+data/*.json
 *.pid
 *.seed
 *.pid.lock

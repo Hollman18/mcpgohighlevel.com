@@ -8,9 +8,11 @@ services:
       GHL_TOOL_PROFILE: "${GHL_TOOL_PROFILE:-curated}"
     ports:
       - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
     labels:
       - "traefik.enable=${TRAEFIK_ENABLE:-false}"
-      - "traefik.http.routers.ghl-mcp.rule=Host(`${MCP_DOMAIN:-localhost}`)"
+      - "traefik.http.routers.ghl-mcp.rule=Host(`${MCP_DOMAIN:-localhost}`) || Host(`${MCP_SITE_DOMAIN:-localhost}`)"
       - "traefik.http.routers.ghl-mcp.entrypoints=websecure"
       - "traefik.http.routers.ghl-mcp.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.services.ghl-mcp.loadbalancer.server.port=8000"

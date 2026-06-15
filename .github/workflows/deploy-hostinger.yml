@@ -49,6 +49,7 @@ jobs:
       REPO_URL: https://github.com/${{ github.repository }}.git
       BRANCH: ${{ github.ref_name }}
       MCP_DOMAIN: ${{ secrets.MCP_DOMAIN }}
+      MCP_SITE_DOMAIN: ${{ secrets.MCP_SITE_DOMAIN }}
       CADDY_EMAIL: ${{ secrets.CADDY_EMAIL }}
       GHL_API_KEY: ${{ secrets.GHL_API_KEY }}
       GHL_LOCATION_ID: ${{ secrets.GHL_LOCATION_ID }}
@@ -57,12 +58,15 @@ jobs:
       GHL_TOOL_PROFILE: ${{ secrets.GHL_TOOL_PROFILE || 'curated' }}
       MCP_AUTH_MODE: ${{ secrets.MCP_AUTH_MODE || 'static' }}
       MCP_AUTH_TOKEN: ${{ secrets.MCP_AUTH_TOKEN }}
+      MCP_ADMIN_TOKEN: ${{ secrets.MCP_ADMIN_TOKEN }}
       MCP_PUBLIC_BASE_URL: ${{ secrets.MCP_PUBLIC_BASE_URL }}
       MCP_OAUTH_SECRET: ${{ secrets.MCP_OAUTH_SECRET }}
       MCP_CORS_MODE: ${{ secrets.MCP_CORS_MODE || 'agent' }}
       MCP_ALLOWED_ORIGINS: ${{ secrets.MCP_ALLOWED_ORIGINS }}
       MCP_JSON_LIMIT: ${{ secrets.MCP_JSON_LIMIT || '1mb' }}
       MCP_FORM_LIMIT: ${{ secrets.MCP_FORM_LIMIT || '256kb' }}
+      MCP_USAGE_ACTIVE_DAYS: ${{ secrets.MCP_USAGE_ACTIVE_DAYS || '30' }}
+      MCP_USAGE_HASH_SALT: ${{ secrets.MCP_USAGE_HASH_SALT }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Checkout
@@ -168,6 +172,9 @@ jobs:
             printf 'GHL_TOOL_PROFILE=%s\n' "$GHL_TOOL_PROFILE"
             printf 'MCP_AUTH_MODE=%s\n' "$MCP_AUTH_MODE"
             printf 'MCP_AUTH_TOKEN=%s\n' "$MCP_AUTH_TOKEN"
+            if [ -n "${MCP_ADMIN_TOKEN:-}" ]; then
+              printf 'MCP_ADMIN_TOKEN=%s\n' "$MCP_ADMIN_TOKEN"
+            fi
             if [ -n "${MCP_PUBLIC_BASE_URL:-}" ]; then
               printf 'MCP_PUBLIC_BASE_URL=%s\n' "$MCP_PUBLIC_BASE_URL"
             fi
@@ -180,6 +187,11 @@ jobs:
             fi
             printf 'MCP_JSON_LIMIT=%s\n' "$MCP_JSON_LIMIT"
             printf 'MCP_FORM_LIMIT=%s\n' "$MCP_FORM_LIMIT"
+            printf 'MCP_USAGE_DATA_PATH=/app/data/usage.json\n'
+            printf 'MCP_USAGE_ACTIVE_DAYS=%s\n' "$MCP_USAGE_ACTIVE_DAYS"
+            if [ -n "${MCP_USAGE_HASH_SALT:-}" ]; then
+              printf 'MCP_USAGE_HASH_SALT=%s\n' "$MCP_USAGE_HASH_SALT"
+            fi
             if [ -n "${OPENAI_API_KEY:-}" ]; then
               printf 'OPENAI_API_KEY=%s\n' "$OPENAI_API_KEY"
             fi
@@ -200,7 +212,7 @@ jobs:
         run: |
           set -euo pipefail
           timeout 9m ssh hostinger-vps \
-            "REPO_URL='$REPO_URL' BRANCH='$BRANCH' DEPLOY_PATH='$DEPLOY_PATH' MCP_DOMAIN='$MCP_DOMAIN' CADDY_EMAIL='$CADDY_EMAIL' ENV_SOURCE='/tmp/ghl-mcp.env' bash /tmp/ghl-mcp-deploy/hostinger-deploy.sh"
+            "REPO_URL='$REPO_URL' BRANCH='$BRANCH' DEPLOY_PATH='$DEPLOY_PATH' MCP_DOMAIN='$MCP_DOMAIN' MCP_SITE_DOMAIN='$MCP_SITE_DOMAIN' CADDY_EMAIL='$CADDY_EMAIL' ENV_SOURCE='/tmp/ghl-mcp.env' bash /tmp/ghl-mcp-deploy/hostinger-deploy.sh"
 
       - name: Smoke test
         if: steps.readiness.outputs.ready == 'true' && env.MCP_DOMAIN != ''

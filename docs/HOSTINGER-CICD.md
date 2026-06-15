@@ -11,6 +11,7 @@ This guide turns the repository into a remotely hosted GoHighLevel MCP server.
 - Streamable HTTP MCP endpoint at `https://your-domain.example/mcp`.
 - Bearer-token protection for hosted MCP routes via `MCP_AUTH_TOKEN`.
 - Optional public BYO mode where each user authorizes with their own GoHighLevel token.
+- Public landing page on the root domain and a protected adoption dashboard.
 
 ## Required GitHub Secrets
 
@@ -24,6 +25,7 @@ Create these in GitHub: `Settings` -> `Secrets and variables` -> `Actions`.
 | `HOSTINGER_SSH_PORT` | No | `22` |
 | `HOSTINGER_DEPLOY_PATH` | No | `/opt/ghl-mcp` |
 | `MCP_DOMAIN` | Recommended | `mcp.example.com` |
+| `MCP_SITE_DOMAIN` | Recommended | `example.com` |
 | `CADDY_EMAIL` | No | `admin@example.com` |
 | `GHL_API_KEY` | Yes | HighLevel Private Integration or OAuth access token |
 | `GHL_LOCATION_ID` | Yes | HighLevel sub-account/location ID |
@@ -32,6 +34,9 @@ Create these in GitHub: `Settings` -> `Secrets and variables` -> `Actions`.
 | `GHL_TOOL_PROFILE` | No | `curated` |
 | `MCP_AUTH_MODE` | No | `static` or `byo-ghl-oauth` |
 | `MCP_AUTH_TOKEN` | Yes | long random token for remote MCP clients |
+| `MCP_ADMIN_TOKEN` | No | private password for `/admin/usage`; falls back to `MCP_AUTH_TOKEN` |
+| `MCP_USAGE_HASH_SALT` | Recommended | random secret used to anonymize Location IDs |
+| `MCP_USAGE_ACTIVE_DAYS` | No | `30` |
 | `MCP_PUBLIC_BASE_URL` | Required for BYO mode | `https://go.mcpgohighlevel.com` |
 | `MCP_OAUTH_SECRET` | Recommended for BYO mode | long random encryption secret |
 | `OPENAI_API_KEY` | No | optional future AI-assisted features |
@@ -49,6 +54,16 @@ Type: A
 Name: mcp
 Value: your VPS public IP
 ```
+
+For the public landing page, also add:
+
+```text
+Type: A
+Name: @
+Value: your VPS public IP
+```
+
+Optionally redirect `www` to the root domain with a `CNAME` record whose name is `www` and target is `mcpgohighlevel.com`.
 
 ## SSH Key Setup
 
@@ -99,6 +114,15 @@ Keep `mcpgohighlevel.com` available for a public install page, documentation, an
 ```text
 https://go.mcpgohighlevel.com/mcp
 ```
+
+Set `MCP_SITE_DOMAIN=mcpgohighlevel.com`. The landing page and private usage dashboard will be available at:
+
+```text
+https://mcpgohighlevel.com
+https://mcpgohighlevel.com/admin/usage
+```
+
+The browser asks for credentials on the dashboard. Use username `admin` and the value of `MCP_ADMIN_TOKEN` as the password. Adoption records are persisted in the Docker-mounted `data/usage.json` file and contain only anonymized account identifiers and timestamps.
 
 Health check:
 

@@ -22,6 +22,8 @@ import {
   createByoGhlOAuthRouter,
   createByoGhlResourceMiddleware,
 } from './byo-ghl-oauth.js';
+import { registerPublicWebRoutes } from './public-web.js';
+import { UsageAnalytics } from './usage-analytics.js';
 
 dotenv.config();
 
@@ -127,9 +129,11 @@ async function main() {
   const toolCount = registry.getToolCount();
   const startTime = Date.now();
   const publicBaseUrl = (process.env.MCP_PUBLIC_BASE_URL || '').replace(/\/$/, '');
-  const logoUri = publicBaseUrl ? `${publicBaseUrl}/logo.png` : '/logo.png';
   const allowedOrigins = configuredAllowedOrigins(publicBaseUrl);
   const corsMode = (process.env.MCP_CORS_MODE || 'agent').toLowerCase();
+  const usageAnalytics = new UsageAnalytics();
+  const adminToken = process.env.MCP_ADMIN_TOKEN || process.env.MCP_AUTH_TOKEN;
+  const mcpUrl = publicBaseUrl ? `${publicBaseUrl}/mcp` : '/mcp';
 
   log('info', 'Initializing GHL MCP server', {
     baseUrl: config.baseUrl,
@@ -180,16 +184,19 @@ async function main() {
     log('debug', `${req.method} ${req.path}`, { ip: req.ip });
     next();
   });
+  registerPublicWebRoutes(app, usageAnalytics, { adminToken, toolCount, mcpUrl });
   if (isByoGhlOAuth) {
     app.use(createByoGhlOAuthRouter({
       baseConfig: config,
       publicBaseUrl: process.env.MCP_PUBLIC_BASE_URL,
       secret: oauthSecret,
+      usageAnalytics,
     }));
     app.use(createByoGhlResourceMiddleware({
       baseConfig: config,
       publicBaseUrl: process.env.MCP_PUBLIC_BASE_URL,
       secret: oauthSecret,
+      usageAnalytics,
     }));
   } else if (!process.env.MCP_AUTH_TOKEN) {
     log('warn', 'MCP_AUTH_TOKEN is not set; HTTP MCP endpoints are unauthenticated');
@@ -243,29 +250,6 @@ async function main() {
 
   app.get('/sse', handleSSE);
   app.post('/sse', handleSSE);
-
-  app.get('/', (_req, res) => {
-    res.json({
-      name: 'GoHighLevel MCP Server',
-      version: '2.0.0',
-      status: 'running',
-      branding: {
-        logo_uri: logoUri,
-        icon_uri: logoUri,
-      },
-      uptime: Math.floor((Date.now() - startTime) / 1000),
-      endpoints: {
-        health: '/health',
-        capabilities: '/capabilities',
-        tools: '/tools',
-        execute: '/execute',
-        mcp: '/mcp',
-        sse: '/sse',
-      },
-      tools: registry.getToolCounts(),
-      cache: ghlClient.getCacheStats(),
-    });
-  });
 
   app.get('/health', (_req, res) => {
     const mem = process.memoryUsage();

@@ -6,6 +6,7 @@ BRANCH="${BRANCH:-main}"
 DEPLOY_PATH="${DEPLOY_PATH:-/opt/ghl-mcp}"
 ENV_SOURCE="${ENV_SOURCE:-/tmp/ghl-mcp.env}"
 MCP_DOMAIN="${MCP_DOMAIN:-}"
+MCP_SITE_DOMAIN="${MCP_SITE_DOMAIN:-}"
 CADDY_EMAIL="${CADDY_EMAIL:-}"
 
 if [ "$(id -u)" -eq 0 ]; then
@@ -102,6 +103,12 @@ sync_repo() {
   fi
 }
 
+prepare_persistent_data() {
+  $SUDO mkdir -p "$DEPLOY_PATH/data"
+  $SUDO chown 1000:1000 "$DEPLOY_PATH/data"
+  $SUDO chmod 700 "$DEPLOY_PATH/data"
+}
+
 install_env_file() {
   if [ ! -f "$ENV_SOURCE" ]; then
     echo "Missing env file at $ENV_SOURCE" >&2
@@ -114,6 +121,7 @@ install_env_file() {
   {
     printf '\n'
     printf 'MCP_DOMAIN=%s\n' "$MCP_DOMAIN"
+    printf 'MCP_SITE_DOMAIN=%s\n' "$MCP_SITE_DOMAIN"
     if [ -n "$MCP_DOMAIN" ] && has_traefik; then
       printf 'TRAEFIK_ENABLE=%s\n' "${TRAEFIK_ENABLE:-true}"
       printf 'TRAEFIK_CERT_RESOLVER=%s\n' "${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
@@ -144,8 +152,13 @@ configure_caddy() {
   fi
 
   tmpfile="$(mktemp)"
+  caddy_domains="$MCP_DOMAIN"
+  if [ -n "$MCP_SITE_DOMAIN" ] && [ "$MCP_SITE_DOMAIN" != "$MCP_DOMAIN" ]; then
+    caddy_domains="$caddy_domains, $MCP_SITE_DOMAIN"
+  fi
+
   cat > "$tmpfile" <<EOF
-${global_block}${MCP_DOMAIN} {
+${global_block}${caddy_domains} {
     encode gzip
     reverse_proxy 127.0.0.1:8000
 }
@@ -174,6 +187,7 @@ ensure_docker
 ensure_caddy
 configure_firewall
 sync_repo
+prepare_persistent_data
 install_env_file
 deploy_compose
 configure_caddy
