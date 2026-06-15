@@ -35,8 +35,13 @@ export function registerPublicWebRoutes(
 ): void {
   app.use('/assets', express.static(PUBLIC_PATH, { maxAge: '7d' }));
   app.get('/favicon.ico', (_req, res) => res.sendFile(path.join(PUBLIC_PATH, 'favicon.ico')));
-  app.get(['/logo.png', '/icon.png', '/apple-touch-icon.png'], (_req, res) => {
+  app.get('/logo.png', (_req, res) => {
     res.sendFile(path.join(PUBLIC_PATH, 'ghl-icon.png'));
+  });
+  app.get('/icon.png', (_req, res) => res.sendFile(path.join(PUBLIC_PATH, 'icon-512.png')));
+  app.get('/apple-touch-icon.png', (_req, res) => res.sendFile(path.join(PUBLIC_PATH, 'apple-touch-icon-512.png')));
+  app.get('/site.webmanifest', (_req, res) => {
+    res.type('application/manifest+json').sendFile(path.join(PUBLIC_PATH, 'site.webmanifest'));
   });
 
   app.get('/', (req, res) => {
