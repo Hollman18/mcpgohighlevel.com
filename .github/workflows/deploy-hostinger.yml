@@ -37,14 +37,11 @@ jobs:
   deploy:
     name: Deploy VPS
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, hostinger, production]
     timeout-minutes: 20
     if: github.ref == 'refs/heads/main'
     environment: production
     env:
-      SSH_HOST: ${{ secrets.HOSTINGER_HOST }}
-      SSH_USER: ${{ secrets.HOSTINGER_USER }}
-      SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT || '22' }}
       DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH || '/opt/ghl-mcp' }}
       REPO_URL: https://github.com/${{ github.repository }}.git
       BRANCH: ${{ github.ref_name }}
@@ -77,9 +74,6 @@ jobs:
         run: |
           set -euo pipefail
           required=(
-            SSH_HOST
-            SSH_USER
-            HOSTINGER_SSH_KEY
             MCP_AUTH_TOKEN
           )
           if [ "${MCP_AUTH_MODE:-static}" = "byo-ghl-oauth" ]; then
@@ -104,58 +98,6 @@ jobs:
             exit 0
           fi
           echo "ready=true" >> "$GITHUB_OUTPUT"
-        env:
-          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-
-      - name: Prepare SSH
-        if: steps.readiness.outputs.ready == 'true'
-        timeout-minutes: 4
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.ssh
-          printf '%s\n' "$HOSTINGER_SSH_KEY" > ~/.ssh/hostinger_deploy_key
-          chmod 600 ~/.ssh/hostinger_deploy_key
-          touch ~/.ssh/known_hosts
-
-          for attempt in 1 2 3 4 5; do
-            if timeout 25s ssh-keyscan -T 20 -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan.err; then
-              break
-            fi
-            echo "::warning::ssh-keyscan failed on attempt $attempt; retrying before falling back to StrictHostKeyChecking=accept-new"
-            cat /tmp/ssh-keyscan.err || true
-            sleep $((attempt * 5))
-          done
-
-          {
-            printf 'Host hostinger-vps\n'
-            printf '  HostName %s\n' "$SSH_HOST"
-            printf '  User %s\n' "$SSH_USER"
-            printf '  Port %s\n' "$SSH_PORT"
-            printf '  IdentityFile ~/.ssh/hostinger_deploy_key\n'
-            printf '  IdentitiesOnly yes\n'
-            printf '  BatchMode yes\n'
-            printf '  StrictHostKeyChecking accept-new\n'
-            printf '  UserKnownHostsFile ~/.ssh/known_hosts\n'
-            printf '  ConnectTimeout 20\n'
-            printf '  ConnectionAttempts 1\n'
-            printf '  ServerAliveInterval 15\n'
-            printf '  ServerAliveCountMax 2\n'
-            printf '  LogLevel ERROR\n'
-          } > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-
-          for attempt in 1 2 3; do
-            if timeout 45s ssh hostinger-vps 'echo ssh-ok'; then
-              exit 0
-            fi
-            echo "::warning::SSH connection check failed on attempt $attempt; retrying"
-            sleep $((attempt * 10))
-          done
-
-          echo "::error::Unable to establish SSH connection to Hostinger after retries"
-          exit 1
-        env:
-          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
 
       - name: Prepare deployment env file
         if: steps.readiness.outputs.ready == 'true'
@@ -197,22 +139,19 @@ jobs:
             fi
           } > .deploy.env
 
-      - name: Copy deployment files
-        if: steps.readiness.outputs.ready == 'true'
-        timeout-minutes: 3
-        run: |
-          set -euo pipefail
-          timeout 45s ssh hostinger-vps "mkdir -p /tmp/ghl-mcp-deploy"
-          timeout 45s scp .deploy.env hostinger-vps:/tmp/ghl-mcp.env
-          timeout 45s scp scripts/hostinger-deploy.sh hostinger-vps:/tmp/ghl-mcp-deploy/hostinger-deploy.sh
-
-      - name: Run remote deployment
+      - name: Run deployment
         if: steps.readiness.outputs.ready == 'true'
         timeout-minutes: 10
         run: |
           set -euo pipefail
-          timeout 9m ssh hostinger-vps \
-            "REPO_URL='$REPO_URL' BRANCH='$BRANCH' DEPLOY_PATH='$DEPLOY_PATH' MCP_DOMAIN='$MCP_DOMAIN' MCP_SITE_DOMAIN='$MCP_SITE_DOMAIN' CADDY_EMAIL='$CADDY_EMAIL' ENV_SOURCE='/tmp/ghl-mcp.env' bash /tmp/ghl-mcp-deploy/hostinger-deploy.sh"
+          REPO_URL="$REPO_URL" \
+          BRANCH="$BRANCH" \
+          DEPLOY_PATH="$DEPLOY_PATH" \
+          MCP_DOMAIN="$MCP_DOMAIN" \
+          MCP_SITE_DOMAIN="$MCP_SITE_DOMAIN" \
+          CADDY_EMAIL="$CADDY_EMAIL" \
+          ENV_SOURCE="$GITHUB_WORKSPACE/.deploy.env" \
+          bash scripts/hostinger-deploy.sh
 
       - name: Smoke test
         if: steps.readiness.outputs.ready == 'true' && env.MCP_DOMAIN != ''

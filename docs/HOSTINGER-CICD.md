@@ -19,10 +19,6 @@ Create these in GitHub: `Settings` -> `Secrets and variables` -> `Actions`.
 
 | Secret | Required | Example |
 | --- | --- | --- |
-| `HOSTINGER_HOST` | Yes | `123.123.123.123` |
-| `HOSTINGER_USER` | Yes | `root` |
-| `HOSTINGER_SSH_KEY` | Yes | private SSH key with VPS access |
-| `HOSTINGER_SSH_PORT` | No | `22` |
 | `HOSTINGER_DEPLOY_PATH` | No | `/opt/ghl-mcp` |
 | `MCP_DOMAIN` | Recommended | `mcp.example.com` |
 | `MCP_SITE_DOMAIN` | Recommended | `example.com` |
@@ -65,21 +61,15 @@ Value: your VPS public IP
 
 Optionally redirect `www` to the root domain with a `CNAME` record whose name is `www` and target is `mcpgohighlevel.com`.
 
-## SSH Key Setup
+## GitHub Actions Runner
 
-On your machine or in a secure admin environment:
+The production deploy job uses a self-hosted GitHub Actions runner installed on the VPS. Register it for this repository with these labels:
 
-```bash
-ssh-keygen -t ed25519 -C "github-actions-ghl-mcp" -f ./ghl_mcp_deploy_key
+```text
+self-hosted, linux, x64, hostinger, production
 ```
 
-Add the public key to the VPS:
-
-```bash
-ssh-copy-id -i ./ghl_mcp_deploy_key.pub root@YOUR_VPS_IP
-```
-
-Put the private key contents into the GitHub secret `HOSTINGER_SSH_KEY`.
+Run the runner as a dedicated non-root account with passwordless `sudo` only for the deployment operations required by this repository. The runner connects outbound to GitHub, so the workflow does not require inbound SSH access from changing GitHub-hosted runner addresses.
 
 ## First Deployment
 
@@ -96,7 +86,7 @@ The workflow will:
 1. Install dependencies.
 2. Build the server.
 3. Run tests.
-4. Copy a generated `.env` to the VPS.
+4. Generate the production `.env` inside the self-hosted runner workspace.
 5. Clone or update the fork in `HOSTINGER_DEPLOY_PATH`.
 6. Run `docker compose up -d --build --remove-orphans`.
 7. Configure Caddy for `MCP_DOMAIN` when provided.
