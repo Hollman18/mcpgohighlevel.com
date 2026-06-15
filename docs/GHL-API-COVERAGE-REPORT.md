@@ -10,7 +10,7 @@ Generated from official GHL docs commit: ae4d260
 - Docs tag/description: `ae4d260`
 - Official endpoint references parsed: 590
 - Local endpoint references parsed: 851
-- Local TypeScript files scanned: 61
+- Local TypeScript files scanned: 63
 
 ## Coverage Summary
 
