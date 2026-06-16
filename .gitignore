@@ -6,17 +6,41 @@ yarn-error.log*
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+!.env.example
+
+# Secrets and credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+id_rsa*
+id_ed25519*
+known_hosts
+authorized_keys
+deploy_key*
+github-token*
+*secret*
+*secrets*
+*credential*
+*credentials*
 
 # MCP Configuration with credentials
 cursor-mcp-config.json
+claude_desktop_config.json
+codex-mcp-config.json
+*-mcp-config.local.json
 
 # Build output
 dist/
 build/
+mcp-apps/dist/
 
 # IDE files
 .vscode/
@@ -31,6 +55,7 @@ Thumbs.db
 # Logs
 logs/
 *.log
+journal*.txt
 
 # Coverage reports
 coverage/
@@ -38,10 +63,26 @@ coverage/
 
 # Runtime data
 pids/
+data/
 data/*.json
 *.pid
 *.seed
 *.pid.lock
+usage.json
+*.sqlite
+*.sqlite3
+*.db
+
+# Backups and dumps
+*.bak
+*.backup
+*.orig
+*.dump
+*.sql
+*.tar
+*.tar.gz
+*.tgz
+*.zip
 
 # Optional npm cache directory
 .npm
@@ -51,5 +92,6 @@ data/*.json
 
 # Temporary folders
 tmp/
-temp/ 
+temp/
 .vercel
+mcp-apps/node_modules/

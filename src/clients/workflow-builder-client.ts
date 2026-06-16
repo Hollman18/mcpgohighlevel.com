@@ -71,6 +71,7 @@ export interface WorkflowBuilderConfig {
   userId: string;
   companyId?: string;
   envFilePath?: string;
+  persistRotatedTokens?: boolean;
 }
 
 // ─── Client ─────────────────────────────────────────────────
@@ -123,10 +124,11 @@ export class WorkflowBuilderClient {
       firebaseApiKey: get('GHL_FIREBASE_API_KEY'),
       firebaseRefreshToken: get('GHL_FIREBASE_REFRESH_TOKEN'),
       refreshToken: get('GHL_REFRESH_TOKEN') || get('GHL_AUTH_REFRESH_TOKEN'),
-      locationId: get('GHL_LOCATION_ID') || 'DZEpRd43MxUJKdtrev9t',
-      userId: get('GHL_USER_ID') || '8Uy3ls0B517vLO2tSNva',
+      locationId: get('GHL_LOCATION_ID'),
+      userId: get('GHL_USER_ID'),
       companyId: get('GHL_COMPANY_ID'),
       envFilePath: skillEnvPath,
+      persistRotatedTokens: get('GHL_WORKFLOW_PERSIST_TOKENS') === 'true',
     };
 
     // v2 JWT refresh is preferred; fall back to Firebase
@@ -135,6 +137,12 @@ export class WorkflowBuilderClient {
         'Workflow builder requires GHL_REFRESH_TOKEN (v2 JWT) or GHL_FIREBASE_API_KEY + GHL_FIREBASE_REFRESH_TOKEN. ' +
         `Checked: ${skillEnvPath} and process.env`
       );
+    }
+    if (!config.locationId) {
+      throw new Error('Workflow builder requires GHL_LOCATION_ID. Refusing to use a hardcoded default location.');
+    }
+    if (!config.userId) {
+      throw new Error('Workflow builder requires GHL_USER_ID. Refusing to use a hardcoded default user.');
     }
 
     return new WorkflowBuilderClient(config);
@@ -246,6 +254,7 @@ export class WorkflowBuilderClient {
    * Write a token back to the .env file (preserves other lines).
    */
   private persistToken(key: string, value: string): void {
+    if (!this.config.persistRotatedTokens) return;
     const envPath = this.config.envFilePath;
     if (!envPath || !existsSync(envPath)) return;
 
