@@ -24,6 +24,7 @@ import {
 } from './byo-ghl-oauth.js';
 import { registerPublicWebRoutes } from './public-web.js';
 import { UsageAnalytics } from './usage-analytics.js';
+import { buildHealthPayload, sendHealthResponse } from './health-response.js';
 
 dotenv.config();
 
@@ -251,22 +252,13 @@ async function main() {
   app.get('/sse', handleSSE);
   app.post('/sse', handleSSE);
 
-  app.get('/health', (_req, res) => {
-    const mem = process.memoryUsage();
-    res.json({
-      status: 'healthy',
-      server: 'ghl-mcp-server',
-      version: '2.0.0',
-      uptime: Math.floor((Date.now() - startTime) / 1000),
-      timestamp: new Date().toISOString(),
-      tools: toolCount,
-      memory: {
-        rss: `${Math.round(mem.rss / 1024 / 1024)}MB`,
-        heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)}MB`,
-        heapTotal: `${Math.round(mem.heapTotal / 1024 / 1024)}MB`,
-      },
+  app.get('/health', (req, res) => {
+    sendHealthResponse(req, res, buildHealthPayload({
+      startTime,
+      toolCount,
+      memory: process.memoryUsage(),
       cache: ghlClient.getCacheStats(),
-    });
+    }));
   });
 
   app.get('/capabilities', (_req, res) => {

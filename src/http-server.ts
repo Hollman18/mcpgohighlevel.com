@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv';
 import { GHLApiClient } from './clients/ghl-api-client.js';
 import { ToolRegistry } from './tool-registry.js';
 import { GHLConfig } from './types/ghl-types.js';
+import { buildHealthPayload, sendHealthResponse } from './health-response.js';
 
 dotenv.config();
 
@@ -129,15 +130,11 @@ class GHLMCPHttpServer {
   }
 
   private setupRoutes(): void {
-    this.app.get('/health', (_req, res) => {
-      res.json({
-        status: 'healthy',
-        server: 'ghl-mcp-server',
-        version: '2.0.0',
+    this.app.get('/health', (req, res) => {
+      sendHealthResponse(req, res, buildHealthPayload({
+        toolCount: this.registry.getToolCount(),
         transport: 'sse',
-        timestamp: new Date().toISOString(),
-        tools: this.registry.getToolCount()
-      });
+      }));
     });
 
     this.app.get('/capabilities', (_req, res) => {
