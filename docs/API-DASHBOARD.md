@@ -1,11 +1,11 @@
 # GoHighLevel MCP API Dashboard
 
-Generated from official GHL docs commit: ae4d260
+Generated from official GHL docs commit: 0af86a4
 
 ## Coverage
 
 - Official GHL docs source: https://github.com/GoHighLevel/highlevel-api-docs.git
-- Official docs commit: ae4d260
+- Official docs commit: 0af86a4
 - Official endpoints parsed: 590
 - Official endpoints covered: 590
 - Coverage: 100%
